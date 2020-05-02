@@ -7,7 +7,7 @@
 using namespace std;
 
 class Graph{
-		int n;
+		int numNodes;
 		list<int> *adjlist;
 	public:
 		void createGraph(int n);
@@ -15,6 +15,7 @@ class Graph{
 };
 
 void Graph::createGraph(int n){
+	numNodes = n;
 	adjlist = new list<int>[n];
 	string line;
 	int node,edge;
@@ -30,10 +31,10 @@ void Graph::createGraph(int n){
 	while(iss >> edge){
 		adjlist[node].push_back(edge);	
 	}
-	/*std::cout << node << endl;
+	std::cout << node << endl;
 	for(auto it = adjlist[node].cbegin(); it != adjlist[node].cend();++it){
 		std::cout << *it << endl;
-	}*/
+	}
     	}
 	inputG.close();
 	}
@@ -41,15 +42,15 @@ void Graph::createGraph(int n){
 }
 
 void Graph::BFS(int start){
-	int *Parents =  new int[n];
-	bool *visited = new bool[n];
+	
+	int *Parents =  new int[numNodes];
+	bool *visited = new bool[numNodes];
 	list<int> queue;
 	
-	for(int i = 0; i < n; i++) 
+	for(int i = 0; i < numNodes; i++){ 
         Parents[i] = -1;
-	for(int i = 0; i < n; i++) 
         visited[i] = false;
-	
+	}
 	visited[start] = true;	
 	queue.push_back(start);
 	
@@ -66,16 +67,15 @@ void Graph::BFS(int start){
             } 
         }		
 	}
-	for(int i=0;i<n;i++){
-	std::cout << Parents[i] << '\n';	
+	for(int i=0;i<numNodes;i++){
+	std::cout << Parents[i] << ' ';	
 	}
 }
 
 int main(){
-	
-	//int n=6;	
+		
 	Graph G;
 	G.createGraph(5);
-	G.BFS(1); 
+	G.BFS(0); 
 	return 0;
 }
