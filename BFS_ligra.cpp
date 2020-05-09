@@ -11,16 +11,19 @@ using namespace std;
 class Graph{
 		int numNodes, numEdges;
 		vector<int> offset, edgelist, Parents;
+		vector<int> *adjlist;
 	public:
-		void createGraph();
+		void createGraph(bool isUndirected);
 		void BFS(int start);
-		void returnPath(int s, int e);	
+		void returnPath(int src, int dest);	
 };
 
-void Graph::createGraph(){
+void Graph::createGraph(bool isUndirected){
 	
-	int count=0; 
+	int count=0;
+	int buffer_start, buffer_end; 
 	string line;
+	//bool isUndirected = false;
 
 	ifstream inputG("input_ligra.txt");
 	if (inputG.is_open()){
@@ -36,17 +39,28 @@ void Graph::createGraph(){
 	}
 	cout << "No. of Nodes = " << numNodes << endl;
 	cout << "No. of Edges = " << numEdges << endl;
-	cout << "VertexOffset Array: "; 
-	for (int i = 0; i<offset.size();i++)
-		cout << offset.at(i) << ' ';
-	cout << endl;
-	cout << "EdgeList Array: ";
-	for (int i = 0; i<edgelist.size();i++)
-		cout << edgelist.at(i) << ' ';
-	cout << endl;
 	inputG.close();
 	}
 	else cout << "Bad input file";
+	adjlist = new vector<int>[numNodes];
+	for(int vid=0; vid<numNodes;vid++){
+		buffer_start = offset.at(vid);
+		if(vid==(numNodes-1)) buffer_end = numEdges;
+		else buffer_end = offset.at(vid+1);
+		if(buffer_start == buffer_end) continue;             //node with no edges
+		else{
+			for(int eid=buffer_start;eid<buffer_end;eid++){
+			adjlist[vid].push_back(edgelist.at(eid));
+			if(isUndirected) adjlist[edgelist.at(eid)].push_back(vid);
+			}
+		}
+	}
+	for (int i = 0; i<numNodes;i++){
+		cout << "Edgelist of node" << i << ": ";
+		for(int neighbor: adjlist[i])
+			cout << neighbor << ' ';
+		cout << endl;
+	}
 }
 
 void Graph::BFS(int start){
@@ -65,39 +79,33 @@ void Graph::BFS(int start){
 	while(!queue.empty()){
 		int node = queue.front();
 		queue.pop_front();
-		int start = offset.at(node),end;
-		if(node==(numNodes-1)) end = (numEdges-1);
-		else end = offset.at(node+1);
-		for (int i = start; i < end;i++){
-			int neighbor = edgelist.at(i); 
-            		if (!visited[neighbor]) { 
-                		visited[neighbor] = true;
-				Parents[neighbor] = node;
-                		queue.push_back(neighbor); 
+		for (auto it = adjlist[node].cbegin(); it != adjlist[node].cend();++it){
+            		if (!visited[*it]) { 
+                		visited[*it] = true;
+				Parents[*it] = node;
+                		queue.push_back(*it); 
             		}
         	}		
 	}
-	/*for(int i=0;i<numNodes;i++){
-	std::cout << Parents[i] << ' ';	
-	}*/
+	for(int i=0;i<numNodes;i++)	std::cout << Parents[i] << ' ';
+	cout << endl;
 }
 
-void Graph:: returnPath(int s, int e){
-	BFS(s);
+void Graph:: returnPath(int src, int dest){
+	BFS(src);
 	vector<int> path;
-	for(int at = e; at!=-1; at=Parents[at])
+	for(int at = dest; at!=-1; at=Parents[at])
 		path.push_back(at);
 	std::reverse(path.begin(),path.end());
-	cout << "Path from node " << s << " to node " << e << ": ";
-	for(int i: path)
-		cout << i << ' ';
+	cout << "Path from node" << src << " to node" << dest << ": ";
+	for(int i: path) cout << i << ' ';
 	cout << endl;
 }
 
 int main(){
 		
 	Graph G;
-	G.createGraph(); 
-	G.returnPath(0,4);
+	G.createGraph(true); 
+	G.returnPath(4,0);
 	return 0;
 }
