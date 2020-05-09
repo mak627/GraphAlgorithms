@@ -25,7 +25,8 @@ void Graph::createGraph(bool isUndirected){
 	string line;
 	//bool isUndirected = false;
 
-	ifstream inputG("input_ligra.txt");
+	//ifstream inputG("input_ligra.txt");
+	ifstream inputG("input_disconn.txt");
 	if (inputG.is_open()){
 	while(getline (inputG,line)){
 		++count;
@@ -98,14 +99,17 @@ void Graph:: returnPath(int src, int dest){
 		path.push_back(at);
 	std::reverse(path.begin(),path.end());
 	cout << "Path from node" << src << " to node" << dest << ": ";
-	for(int i: path) cout << i << ' ';
+	if(path.front()==src)
+		for(int i: path) cout << i << ' ';
+	else
+		cout << "NOT_FOUND";
 	cout << endl;
 }
 
 int main(){
 		
 	Graph G;
-	G.createGraph(true); 
-	G.returnPath(4,0);
+	G.createGraph(false); 
+	G.returnPath(0,4);
 	return 0;
 }
