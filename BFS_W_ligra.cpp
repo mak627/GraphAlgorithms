@@ -1,15 +1,18 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <queue>
+#include <algorithm>
 
 using namespace std;
 
 class Graph{
 		int numNodes, numEdges;
-		vector<int> offset, edgelist, wgtlist;
+		vector<int> offset, edgelist, wgtlist, Parents;
 		vector<pair<uint,uint>> *adjlist;
 	public:
 		void createGraph(bool isUndirected);
+		void BFS_W(int start);
 			
 };
 //read weighted graph from input file and store in a data structure
@@ -58,11 +61,40 @@ void Graph::createGraph(bool isUndirected){
 	}
 }
 
-//TO-DO Implement BFS function for weighted graph
+//Incomplete BFS function for weighted graph
+void Graph::BFS_W(int start){
+	
+	//bool visited[numNodes];
+	int distance[numNodes];
+	fill_n(distance, numNodes, 999);
+	distance[start] = 0;
+	priority_queue<pair<int,int>, vector<int>, greater<int>> pqueue;
+	pqueue.push(start);
+	
+	for(int i = 0; i < numNodes; i++){ 
+        Parents.push_back(-1);
+        //visited[i] = falsse;
+	}
+	//visited[start] = true;
+	
+	while(!pqueue.empty()){
+		int node = pqueue.top();
+		pqueue.pop();
+		cout << node << endl;
+		/*for (auto& neighbor: adjlist[node]){
+            		if(distance[neighbor.first] > distance[node] + neighbor.second){
+				 distance[neighbor.first] = distance[node] + neighbor.second;
+            		}
+        	}*/		
+	}
+	/*for(int i=0;i<numNodes;i++)	std::cout << Parents[i] << ' ';
+	cout << endl;*/
+}
 
 int main(){
 		
 	Graph G;
-	G.createGraph(false); 
+	G.createGraph(false);
+	G.BFS_W(0); 
 	return 0;
 }
