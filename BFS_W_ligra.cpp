@@ -5,14 +5,15 @@
 #include <algorithm>
 
 using namespace std;
+typedef pair<int,int> int_pair;
 
 class Graph{
 		int numNodes, numEdges;
-		vector<int> offset, edgelist, wgtlist, Parents;
-		vector<pair<uint,uint>> *adjlist;
+		vector<int> offset, edgelist, wgtlist;
+		vector<pair<int,int>> *adjlist;
 	public:
 		void createGraph(bool isUndirected);
-		void BFS_W(int start);
+		void BFS_W(int start, int end);
 			
 };
 //read weighted graph from input file and store in a data structure
@@ -40,7 +41,7 @@ void Graph::createGraph(bool isUndirected){
 	inputG.close();
 	}
 	else cout << "Bad input file";
-	adjlist = new vector<pair<uint,uint>>[numNodes];
+	adjlist = new vector<pair<int,int>>[numNodes];
 	for(int vid=0; vid<numNodes;vid++){
 		buffer_start = offset.at(vid);
 		if(vid==(numNodes-1)) buffer_end = numEdges;
@@ -48,8 +49,8 @@ void Graph::createGraph(bool isUndirected){
 		if(buffer_start == buffer_end) continue;
 		else{
 			for(int eid=buffer_start;eid<buffer_end;eid++){
-			adjlist[vid].push_back(pair<uint,uint>(edgelist.at(eid),wgtlist.at(eid)));
-			if(isUndirected) adjlist[edgelist.at(eid)].push_back(pair<uint,uint>(vid,wgtlist.at(eid)));
+			adjlist[vid].push_back(pair<int,int>(edgelist.at(eid),wgtlist.at(eid)));
+			if(isUndirected) adjlist[edgelist.at(eid)].push_back(pair<int,int>(vid,wgtlist.at(eid)));
 			}
 		}
 	}
@@ -61,40 +62,46 @@ void Graph::createGraph(bool isUndirected){
 	}
 }
 
-//Incomplete BFS function for weighted graph
-void Graph::BFS_W(int start){
+//BFS function for weighted graph
+void Graph::BFS_W(int start, int end){
 	
-	//bool visited[numNodes];
-	int distance[numNodes];
+	int distance[numNodes], Parents[numNodes];
+	fill_n(Parents, numNodes, -1);
 	fill_n(distance, numNodes, 999);
 	distance[start] = 0;
-	priority_queue<pair<int,int>, vector<int>, greater<int>> pqueue;
-	pqueue.push(start);
 	
-	for(int i = 0; i < numNodes; i++){ 
-        Parents.push_back(-1);
-        //visited[i] = falsse;
-	}
-	//visited[start] = true;
+	priority_queue<int_pair, vector<int_pair>, greater<int_pair>> pqueue;
+	pqueue.push(make_pair(start,distance[start]));
+	
 	
 	while(!pqueue.empty()){
-		int node = pqueue.top();
+		int node = pqueue.top().first;
 		pqueue.pop();
-		cout << node << endl;
-		/*for (auto& neighbor: adjlist[node]){
-            		if(distance[neighbor.first] > distance[node] + neighbor.second){
-				 distance[neighbor.first] = distance[node] + neighbor.second;
+		for (auto it = adjlist[node].cbegin(); it != adjlist[node].cend();++it){
+            		if(distance[(*it).first] > distance[node] + (*it).second){
+				distance[(*it).first] = distance[node] + (*it).second;
+				pqueue.push(make_pair((*it).first,distance[(*it).first]));
+				Parents[(*it).first] = node;
             		}
-        	}*/		
+        	}		
 	}
-	/*for(int i=0;i<numNodes;i++)	std::cout << Parents[i] << ' ';
-	cout << endl;*/
+	
+	vector<int> lowestCostPath;
+	for(int at = end; at!=-1; at=Parents[at])
+		lowestCostPath.push_back(at);
+	reverse(lowestCostPath.begin(),lowestCostPath.end());
+	cout << "Lowest Cost Path from node" << start << " to node" << end << ": ";
+	if(lowestCostPath.front()==start)
+		for(int i: lowestCostPath) cout << i << ' ';
+	else
+		cout << "NOT_FOUND";
+	cout << endl;
 }
 
 int main(){
 		
 	Graph G;
 	G.createGraph(false);
-	G.BFS_W(0); 
+	G.BFS_W(0,4); 
 	return 0;
 }
