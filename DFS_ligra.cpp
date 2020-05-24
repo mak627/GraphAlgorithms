@@ -4,8 +4,10 @@
 #include <vector>
 #include <list>
 #include <algorithm>
+#include <chrono>
 
 using namespace std;
+using namespace std::chrono;
 
 class Graph{
 		int numNodes, numEdges;
@@ -26,7 +28,7 @@ void Graph::createGraph(bool isUndirected){
 	string line;
 	vector<int> offset, edgelist;
 
-	ifstream inputG("input_ligra.txt");
+	ifstream inputG("rMat_1000000");
 	//ifstream inputG("input_disconn.txt");
 	if (inputG.is_open()){
 	while(getline (inputG,line)){
@@ -57,18 +59,18 @@ void Graph::createGraph(bool isUndirected){
 			}
 		}
 	}
-	for (int i = 0; i<numNodes;i++){
+	/*for (int i = 0; i<numNodes;i++){
 		cout << "Edgelist of node" << i << ": ";
 		for(int neighbor: adjlist[i])
 			cout << neighbor << ' ';
 		cout << endl;
-	}
+	}*/
 }
 
 void Graph::DFS_R(int node){
 	
 	visited[node] = true;
-	cout << node << ' ';
+	//cout << node << ' ';
 	for (auto it = adjlist[node].cbegin(); it != adjlist[node].cend();++it){ 
             	if (!visited[*it]) {
 			Parents[*it] = node; 
@@ -83,7 +85,7 @@ void Graph::DFS(int start){
         Parents.push_back(-1);
         visited.push_back(false);
 	}
-	cout << "Depth First Traversal from Node" << start << ": ";
+	//cout << "Depth First Traversal from Node" << start << ": ";
 	DFS_R(start);
 	cout << endl;
 
@@ -111,6 +113,13 @@ int main(){
 		
 	Graph G;
 	G.createGraph(false);
-	G.returnPath(0,1); 
+	//Get start time
+	auto start = high_resolution_clock::now();
+	G.DFS(1);
+	//G.returnPath(0,1);
+	//Get end time
+	auto end = high_resolution_clock::now();
+	auto time_diff = end - start;
+	cout << duration<double,milli> (time_diff).count() << "ms" << endl; 
 	return 0;
 }

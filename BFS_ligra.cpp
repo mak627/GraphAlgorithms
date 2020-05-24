@@ -5,8 +5,10 @@
 #include <vector>
 #include <list>
 #include <algorithm>
+#include <chrono>
 
 using namespace std;
+using namespace std::chrono;
 
 class Graph{
 		int numNodes, numEdges;
@@ -25,8 +27,8 @@ void Graph::createGraph(bool isUndirected){
 	string line;
 	//bool isUndirected = false;
 
-	//ifstream inputG("input_ligra.txt");
-	ifstream inputG("input_disconn.txt");
+	ifstream inputG("rMat_100000");
+	//ifstream inputG("input_disconn.txt");
 	if (inputG.is_open()){
 	while(getline (inputG,line)){
 		++count;
@@ -56,12 +58,12 @@ void Graph::createGraph(bool isUndirected){
 			}
 		}
 	}
-	for (int i = 0; i<numNodes;i++){
+	/*for (int i = 0; i<numNodes;i++){
 		cout << "Edgelist of node" << i << ": ";
 		for(int neighbor: adjlist[i])
 			cout << neighbor << ' ';
 		cout << endl;
-	}
+	}*/
 }
 
 void Graph::BFS(int start){
@@ -88,8 +90,8 @@ void Graph::BFS(int start){
             		}
         	}		
 	}
-	for(int i=0;i<numNodes;i++)	std::cout << Parents[i] << ' ';
-	cout << endl;
+	/*for(int i=0;i<numNodes;i++)	std::cout << Parents[i] << ' ';
+	cout << endl;*/
 }
 
 void Graph:: returnPath(int src, int dest){
@@ -109,7 +111,14 @@ void Graph:: returnPath(int src, int dest){
 int main(){
 		
 	Graph G;
-	G.createGraph(false); 
-	G.returnPath(0,4);
+	G.createGraph(false);
+	//Get start time
+	auto start = high_resolution_clock::now();
+	G.BFS(1); 
+	//G.returnPath(0,4);
+	//Get end time
+	auto end = high_resolution_clock::now();
+	auto time_diff = end - start;
+	cout << duration<double,milli> (time_diff).count() << "ms" << endl;
 	return 0;
 }
