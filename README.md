@@ -10,9 +10,9 @@ AdjacencyGraph(Ligra Framework)
 2. Disjoint components
 
 ## Command to synthesize graph inputs using graph generator from Ligra
-# Parameters required are No. of vertices and output file name
-# The number of edges by default are 10 times the no. of vertices
-# Below command shows generating a graph input with 1M vertices and filename as rMat_1000000 
+Parameters required are No. of vertices and output file name
+The number of edges by default are 10 times the no. of vertices
+Below command shows generating a graph input with 1M vertices and filename as rMat_1000000 
 
 ./rMatGraph 1000000 rMat_1000000
 
